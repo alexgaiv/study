@@ -1,6 +1,5 @@
 #include "tbitfield.h"
 #include <math.h>
-#include <string.h>
 
 TBitField::TBitField(int USize)
 {
@@ -47,13 +46,12 @@ void TBitField::AddElem(int index)
 	mem[GetElemIndex(index)] |= (1 << GetBitIndex(index));
 }
 
-
 void TBitField::DelElem(int index)
 {
 	mem[GetElemIndex(index)] &= ~(1 << GetBitIndex(index));
 }
 
-bool TBitField::IsElemPresent(int index)
+bool TBitField::GetElem(int index)
 {
 	return (mem[GetElemIndex(index)] >> index) & 1;
 }
@@ -93,7 +91,7 @@ String ^TBitField::ToString()
 	for (int i = 0; i < memSize; i++)
 		for (int j = 0; j < 8*sizeof(int); j++) {
 			if (mem[i] & (1 << j)) {
-				s += Convert::ToString(8*sizeof(int)*i + j) + ' ';
+				s += Convert::ToString((int)(8*sizeof(int)*i + j), 10) + " ";
 			}
 		}
 	return s;

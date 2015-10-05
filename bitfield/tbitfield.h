@@ -1,6 +1,9 @@
 #ifndef _TBITFIELD_H_
 #define _TBITFIELD_H_
 
+#include <string>
+
+using namespace std;
 using namespace System;
 
 class TBitField
@@ -14,7 +17,7 @@ public:
 
 	void AddElem(int index);
 	void DelElem(int index);
-	bool IsElemPresent(int index);
+	bool GetElem(int index);
 
 	TBitField operator&(const TBitField &bf);
 	TBitField operator|(const TBitField &bf);
