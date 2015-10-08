@@ -8,6 +8,5 @@ void Main(array<String^>^ args)
 {
     Application::EnableVisualStyles();
     Application::SetCompatibleTextRenderingDefault(false);
-    bitfield::MyForm myForm;        //NameOfProject::NameOfForm instanceOfForm;
-    Application::Run(%myForm);
+    Application::Run(gcnew bitfield::MyForm);
 }
