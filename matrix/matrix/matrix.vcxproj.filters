@@ -26,7 +26,10 @@
     <ClInclude Include="MyForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tmatrix.h">
+    <ClInclude Include="tmatrix4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tmatrix5.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

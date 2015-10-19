@@ -1,5 +1,5 @@
-#ifndef _TMATRIX_H_
-#define _TMATRIX_H_
+#ifndef _TMATRIX4_H_
+#define _TMATRIX4_H_
 
 
 template<class T>
@@ -15,9 +15,12 @@ public:
 	TMatrix_imp4<T> operator-(const TMatrix_imp4<T> &m) const;
 	TMatrix_imp4<T> operator*(const TMatrix_imp4<T> &m) const;
 
-	T &Elem(int i, int j) const {
-		if (j > i) return T(0);
-		return arr[i][j];
+	T GetElem(int i, int j) const {
+		if (j < i) return T(0);
+		return arr[i][j - i];
+	}
+	void SetElem(int i, int j, T elem) {
+		if (j >= i) arr[i][j - i] = elem;
 	}
 private:
 	int size;
@@ -100,4 +103,4 @@ TMatrix_imp4<T> TMatrix_imp4<T>::operator*(const TMatrix_imp4<T> &m) const
 
 }
 
-#endif // _TMATRIX_H_
+#endif // _TMATRIX4_H_
