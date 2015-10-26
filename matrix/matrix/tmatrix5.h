@@ -188,7 +188,8 @@ void TMatrix_imp5<int>::Input(DataGridView ^dataGrid)
 		for (int j = i; j < size; j++) {
 			DataGridViewCell ^c = dataGrid->Rows[i]->Cells[j];
 			int val = 0;
-			Int32::TryParse(c->Value->ToString(), val);
+			if (c->Value != nullptr)
+				Int32::TryParse(c->Value->ToString(), val);
 			vec[i][j] = val;
 		}
 }

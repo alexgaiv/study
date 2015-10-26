@@ -15,18 +15,20 @@ namespace matrix {
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
 	public:
-		MyForm(void) : matrSize(6)
+		MyForm(void) : maxMatrSize(6), matrSize(maxMatrSize)
 		{
 			InitializeComponent();
 			InitGrids();
 			m1 = new TMatrix_imp5<int>(matrSize);
 			m2 = new TMatrix_imp5<int>(matrSize);
 		}
-	private: System::Windows::Forms::Button^  button4;
+	
 	public: 
 	private:
 		TMatrix_imp5<int> *m1, *m2;
-		const int matrSize;
+		const int maxMatrSize;
+		int matrSize;
+
 		void InitGrids()
 		{
 			array<DataGridView ^> ^grids = { dataGridView1, dataGridView2, dataGridView3 };
@@ -39,13 +41,33 @@ namespace matrix {
 					DataGridViewRow ^row = (DataGridViewRow ^)grid->Rows[0]->Clone();
 					grid->Rows->Add(row);
 				}
-				for (int i = 0; i < matrSize; i++)
-					for (int j = 0; j < matrSize; j++)
+			}
+			FillGrids();	
+		}
+
+		void FillGrids()
+		{
+			array<DataGridView ^> ^grids = { dataGridView1, dataGridView2, dataGridView3 };
+			for (int i = 0; i < 3; i++) {
+				DataGridView ^grid = grids[i];
+				for (int i = 0; i < grid->Rows->Count; i++)
+					for (int j = 0; j < grid->Rows[i]->Cells->Count; j++)
 					{
 						DataGridViewCell ^c = grid->Rows[i]->Cells[j];
-						c->Value = "0";
-						if (j < i) {
-							c->Style->BackColor = Color::LightGray;
+						if (i < matrSize && j < matrSize) {
+							c->Value = "0";
+							if (j < i) {
+								c->Style->BackColor = Color::LightGray;
+								c->ReadOnly = true;
+							}
+							else {
+								c->Style->BackColor = Color::White;
+								c->ReadOnly = false;
+							}
+						}
+						else {
+							c->Value = nullptr;
+							c->Style->BackColor = Color::Gray;
 							c->ReadOnly = true;
 						}
 					}
@@ -60,6 +82,10 @@ namespace matrix {
 		}
 
 #pragma region Windows Form Designer generated code
+	private: System::Windows::Forms::Button^  button4;
+	private: System::Windows::Forms::TextBox^  textBox1;
+	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::Button^  button5;
 	private: System::Windows::Forms::DataGridView^  dataGridView1;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column1;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column2;
@@ -114,6 +140,9 @@ namespace matrix {
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button4 = (gcnew System::Windows::Forms::Button());
+			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->button5 = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView3))->BeginInit();
@@ -129,7 +158,7 @@ namespace matrix {
 			this->dataGridView1->ColumnHeadersVisible = false;
 			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(6) {this->Column1, 
 				this->Column2, this->Column3, this->Column4, this->Column5, this->Column6});
-			this->dataGridView1->Location = System::Drawing::Point(33, 24);
+			this->dataGridView1->Location = System::Drawing::Point(32, 69);
 			this->dataGridView1->MultiSelect = false;
 			this->dataGridView1->Name = L"dataGridView1";
 			this->dataGridView1->RowHeadersVisible = false;
@@ -193,7 +222,7 @@ namespace matrix {
 			this->dataGridView2->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(6) {this->dataGridViewTextBoxColumn1, 
 				this->dataGridViewTextBoxColumn2, this->dataGridViewTextBoxColumn3, this->dataGridViewTextBoxColumn4, this->dataGridViewTextBoxColumn5, 
 				this->dataGridViewTextBoxColumn6});
-			this->dataGridView2->Location = System::Drawing::Point(237, 24);
+			this->dataGridView2->Location = System::Drawing::Point(236, 69);
 			this->dataGridView2->MultiSelect = false;
 			this->dataGridView2->Name = L"dataGridView2";
 			this->dataGridView2->RowHeadersVisible = false;
@@ -257,7 +286,7 @@ namespace matrix {
 			this->dataGridView3->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(6) {this->dataGridViewTextBoxColumn7, 
 				this->dataGridViewTextBoxColumn8, this->dataGridViewTextBoxColumn9, this->dataGridViewTextBoxColumn10, this->dataGridViewTextBoxColumn11, 
 				this->dataGridViewTextBoxColumn12});
-			this->dataGridView3->Location = System::Drawing::Point(439, 24);
+			this->dataGridView3->Location = System::Drawing::Point(438, 69);
 			this->dataGridView3->MultiSelect = false;
 			this->dataGridView3->Name = L"dataGridView3";
 			this->dataGridView3->RowHeadersVisible = false;
@@ -314,7 +343,7 @@ namespace matrix {
 			// 
 			this->button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(204)));
-			this->button1->Location = System::Drawing::Point(225, 194);
+			this->button1->Location = System::Drawing::Point(224, 239);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(54, 49);
 			this->button1->TabIndex = 3;
@@ -326,7 +355,7 @@ namespace matrix {
 			// 
 			this->button2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(204)));
-			this->button2->Location = System::Drawing::Point(297, 194);
+			this->button2->Location = System::Drawing::Point(296, 239);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(54, 49);
 			this->button2->TabIndex = 4;
@@ -338,7 +367,7 @@ namespace matrix {
 			// 
 			this->button3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(204)));
-			this->button3->Location = System::Drawing::Point(369, 194);
+			this->button3->Location = System::Drawing::Point(368, 239);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(54, 49);
 			this->button3->TabIndex = 5;
@@ -348,7 +377,7 @@ namespace matrix {
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(286, 253);
+			this->button4->Location = System::Drawing::Point(285, 298);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(75, 23);
 			this->button4->TabIndex = 6;
@@ -356,11 +385,41 @@ namespace matrix {
 			this->button4->UseVisualStyleBackColor = true;
 			this->button4->Click += gcnew System::EventHandler(this, &MyForm::button4_Click);
 			// 
+			// textBox1
+			// 
+			this->textBox1->Location = System::Drawing::Point(68, 25);
+			this->textBox1->Name = L"textBox1";
+			this->textBox1->Size = System::Drawing::Size(100, 20);
+			this->textBox1->TabIndex = 7;
+			this->textBox1->Text = L"6";
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(32, 28);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(30, 13);
+			this->label1->TabIndex = 8;
+			this->label1->Text = L"Size:";
+			// 
+			// button5
+			// 
+			this->button5->Location = System::Drawing::Point(174, 23);
+			this->button5->Name = L"button5";
+			this->button5->Size = System::Drawing::Size(75, 23);
+			this->button5->TabIndex = 9;
+			this->button5->Text = L"OK";
+			this->button5->UseVisualStyleBackColor = true;
+			this->button5->Click += gcnew System::EventHandler(this, &MyForm::button5_Click);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(646, 302);
+			this->ClientSize = System::Drawing::Size(646, 331);
+			this->Controls->Add(this->button5);
+			this->Controls->Add(this->label1);
+			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->button4);
 			this->Controls->Add(this->button3);
 			this->Controls->Add(this->button2);
@@ -374,6 +433,7 @@ namespace matrix {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView3))->EndInit();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -416,6 +476,22 @@ namespace matrix {
 		m.Output(dataGridView1);
 		m.Output(dataGridView2);
 		m.Output(dataGridView3);
+	}
+	void button5_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		if (!Int32::TryParse(textBox1->Text, matrSize) || !matrSize)
+			return;
+		if (matrSize > maxMatrSize) {
+			textBox1->Text = "";
+			return;
+		}
+
+		delete m1;
+		delete m2;
+		m1 = new TMatrix_imp5<int>(matrSize);
+		m2 = new TMatrix_imp5<int>(matrSize);
+
+		FillGrids();
 	}
 };
 }
