@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExpressionParser", "ExpressionParser\ExpressionParser.vcxproj", "{2CB3EF25-DE27-4EDB-B959-013476CFB135}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stack_test", "stack_test\stack_test.vcxproj", "{27761BCE-DCD6-44E8-8E4A-09C1E4429396}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "map_test", "map_test\map_test.vcxproj", "{D297CFDF-87C8-4924-9194-DBC893261DCF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CB3EF25-DE27-4EDB-B959-013476CFB135}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2CB3EF25-DE27-4EDB-B959-013476CFB135}.Debug|Win32.Build.0 = Debug|Win32
+		{2CB3EF25-DE27-4EDB-B959-013476CFB135}.Release|Win32.ActiveCfg = Release|Win32
+		{2CB3EF25-DE27-4EDB-B959-013476CFB135}.Release|Win32.Build.0 = Release|Win32
+		{27761BCE-DCD6-44E8-8E4A-09C1E4429396}.Debug|Win32.ActiveCfg = Debug|Win32
+		{27761BCE-DCD6-44E8-8E4A-09C1E4429396}.Debug|Win32.Build.0 = Debug|Win32
+		{27761BCE-DCD6-44E8-8E4A-09C1E4429396}.Release|Win32.ActiveCfg = Release|Win32
+		{27761BCE-DCD6-44E8-8E4A-09C1E4429396}.Release|Win32.Build.0 = Release|Win32
+		{D297CFDF-87C8-4924-9194-DBC893261DCF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D297CFDF-87C8-4924-9194-DBC893261DCF}.Debug|Win32.Build.0 = Debug|Win32
+		{D297CFDF-87C8-4924-9194-DBC893261DCF}.Release|Win32.ActiveCfg = Release|Win32
+		{D297CFDF-87C8-4924-9194-DBC893261DCF}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
