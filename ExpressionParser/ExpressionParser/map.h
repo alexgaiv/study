@@ -14,11 +14,6 @@ public:
 	string GetKey() const { return key; }
 	TValue GetValue() const { return value; }
 	void SetValue(TValue val) { value = val; }
-
-	Record<TValue> &operator=(const TValue &v) {
-		value = v;
-		return *this;
-	}
 private:
 	string key;
 	TValue value;
@@ -43,19 +38,15 @@ public:
 	T GetValue(const string &key) const;
 	void SetValue(const string &key, const T &value);
 	
+	//T GetValueAt(int index) const;
+	//string GetNameAt(int index) const;
+	
 	Map<T> &operator=(const Map<T> &m);
-	//const T &operator[](const string &key) const { return GetValue(key); }
-	T &operator[](const string &key)
-	{
-		int i = Find(key);
-		if (i == -1) throw;
-		return rows[i];
-	}
 private:
 	int size, count;
 	Record<T> *rows;
 
-	int Find(const T *value) const;
+	int Find(const string &key) const;
 };
 
 template<class T>
@@ -118,7 +109,7 @@ void Map<T>::SetValue(const string &key, const T &value)
 }
 
 template<class T>
-int Map<T>::Find(const T *value) const
+int Map<T>::Find(const string &key) const
 {
 	for (int i = 0; i < count; i++) {
 		if (rows[i].GetKey() == key)
@@ -138,6 +129,7 @@ Map<T> &Map<T>::operator=(const Map<T> &m)
 	count = m.count;
 	for (int i = 0; i < count; i++)
 		rows[i] = m.rows[i];
+	return *this;
 }
 
 #endif _TABLE_H_

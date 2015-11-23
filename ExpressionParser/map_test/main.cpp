@@ -40,15 +40,20 @@ int main()
 		i++;
 	}
 
-	m.SetValue("*", 5);
-	cout << m.GetValue("*") << "\n\n";
-
 	Map<int> m2(m);
 	Map<int> m3;
 	m3 = m;
 
 	PrintMap(m2);
 	PrintMap(m3);
+
+	m.SetValue("*", 5);
+	cout << m.GetValue("*") << endl;
+	m.Delete("*");
+	m.Add("test", 42);
+	cout << m.GetValue("test") << "\n\n";
+	m.Delete("test");
+	cout << "Has 'test': " << boolalpha << m.HasValue("test") << endl;
 
 	i = 0;
 	while (!m.IsEmpty()) {

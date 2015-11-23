@@ -6,12 +6,13 @@ class Stack
 {
 public:
 	Stack(int size = 0);
-	Stack(const Stack<T> &s)
+	Stack(const Stack<T> &s);
 	~Stack();
 
 	Stack<T> &operator=(const Stack<T> &s);
 
-	int GetSize() const { return last; }
+	int GetCount() const { return last; }
+	int GetCapacity() const { return size; }
 	bool IsEmpty() const { return last == 0; }
 	bool IsFull() const { return last == size; }
 
@@ -19,7 +20,7 @@ public:
 	T Pop();
 	T Top() const;
 private:
-	int *data;
+	T *data;
 	int size, last;
 };
 
@@ -39,6 +40,20 @@ Stack<T>::Stack(const Stack<T> &s)
 	data = new T[size];
 	for (int i = 0; i < last; i++)
 		data[i] = s.data[i];
+}
+
+template<class T>
+Stack<T> &Stack<T>::operator=(const Stack<T> &s)
+{
+	if (size != s.size) {
+		delete [] data;
+		data = new T[s.size];
+	}
+	size = s.size;
+	last = s.last;
+	for (int i = 0; i < last; i++)
+		data[i] = s.data[i];
+	return *this;
 }
 
 template<class T>
