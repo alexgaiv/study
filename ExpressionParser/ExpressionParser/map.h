@@ -32,21 +32,17 @@ public:
 	bool IsEmpty() const { return count == 0; }
 	bool IsFull() const { return count == size; }
 
-	void Add(const string &key, const T &value = T(0));
+	int Add(const string &key, const T &value = T(0));
 	void Delete(const string &key);
 	bool HasValue(const string &key) const;
 	T GetValue(const string &key) const;
 	void SetValue(const string &key, const T &value);
-	
-	//T GetValueAt(int index) const;
-	//string GetNameAt(int index) const;
-	
+	int Find(const string &key) const;
+
 	Map<T> &operator=(const Map<T> &m);
 private:
 	int size, count;
 	Record<T> *rows;
-
-	int Find(const string &key) const;
 };
 
 template<class T>
@@ -73,10 +69,16 @@ Map<T>::~Map() {
 }
 
 template<class T>
-void Map<T>::Add(const string &key, const T &value)
+int Map<T>::Add(const string &key, const T &value)
 {
 	if (IsFull()) throw;
-	rows[count++] = Record<T>(key, value);
+	int i = Find(key);
+	if (i != -1) {
+		rows[i].SetValue(value);
+		return i;
+	}
+	rows[count] = Record<T>(key, value);
+	return count++;
 }
 
 template<class T>

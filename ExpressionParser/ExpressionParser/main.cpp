@@ -2,5 +2,5 @@
 
 int main()
 {
-	Parser p;
+	Poliz p("a + bv - cos(atan(342))/3");
 }
