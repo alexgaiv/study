@@ -39,6 +39,8 @@ public:
 	void SetValue(const string &key, const T &value);
 	int Find(const string &key) const;
 
+	Record<T> &GetRecordAt(int idx);
+
 	Map<T> &operator=(const Map<T> &m);
 private:
 	int size, count;
@@ -118,6 +120,13 @@ int Map<T>::Find(const string &key) const
 			return i;
 	}
 	return -1;
+}
+
+template<class T>
+Record<T> &Map<T>::GetRecordAt(int i)
+{
+	if (i < 0 || i >= count) throw;
+	return rows[i];
 }
 
 template<class T>

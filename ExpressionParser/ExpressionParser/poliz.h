@@ -12,6 +12,7 @@ class Poliz
 {
 public:
 	Poliz(const string &expr = "");
+	string ToString();
 private:
 	friend class Parser;
 
@@ -55,21 +56,31 @@ private:
 	Map<int> opTable;
 	const char *str;
 
+	bool IsFunc(lexem_t t) { return t >= LEX_COS && t <= LEX_LOG; }
+	bool IsOperator(lexem_t t) { return t >= LEX_PLUS && t <= LEX_POW; }
+
 	void FillOpTable();
 	Lexem NextLexem();
+	void MakePoliz();
 };
 
 Poliz::Poliz(const string &expr)
-	: poliz(expr.size()), lexemStack(100),
+	: poliz(expr.size()), lexemStack(expr.size()),
 	varTable(expr.size()), opTable(12)
 {
-	str = expr.c_str();
-	FillOpTable();
-
-	Lexem l;
-	do {
-		l = NextLexem();
-	} while (l.type != LEX_EOL);
+	try {
+		str = expr.c_str();
+		FillOpTable();
+		MakePoliz();
+	}
+	catch(char c)
+	{
+	
+	}
+	catch(Lexem l)
+	{
+	
+	}
 }
 
 void Poliz::FillOpTable()
@@ -120,8 +131,10 @@ Poliz::Lexem Poliz::NextLexem()
 		case DELIM:
 		{
 			int i = opTable.Find(string(1, c));
-			if (i != -1)
+			if (i != -1) {
+				str++;
 				return Lexem(lexem_t(i));
+			}
 			if (isalpha(c))
 				state = DELIM_STR;
 			else throw c;
@@ -145,6 +158,66 @@ Poliz::Lexem Poliz::NextLexem()
 		}
 		}
 	}
+}
+
+void Poliz::MakePoliz()
+{
+	Lexem l = NextLexem();
+	while (l.type != LEX_EOL)
+	{
+		if (l.type == LEX_NUMBER || l.type == LEX_VAR)
+			poliz.Push(l);
+		else if (IsFunc(l.type) || l.type == LEX_LPAREN)
+			lexemStack.Push(l);
+		else if (l.type == LEX_RPAREN)
+		{
+			while (l.type != LEX_LPAREN)
+			{
+				if (lexemStack.IsEmpty()) throw l;
+				poliz.Push(lexemStack.Pop());
+			}
+			lexemStack.Pop();
+			if (!lexemStack.IsEmpty() && IsFunc(lexemStack.Top().type))
+				poliz.Push(lexemStack.Pop());
+		}
+		else if (IsOperator(l.type)) {
+			int p = opTable.GetRecordAt(l.type).GetValue();
+			while (!lexemStack.IsEmpty() && IsOperator(lexemStack.Top().type) &&
+				p <= opTable.GetRecordAt(lexemStack.Top().type).GetValue())
+			{
+				poliz.Push(lexemStack.Pop());
+			}
+			lexemStack.Push(l);
+		}
+		l = NextLexem();
+	}
+	while (!lexemStack.IsEmpty()) {
+		Lexem l = lexemStack.Pop();
+		if (!IsOperator(l.type)) throw l;
+		poliz.Push(l);
+	}
+}
+
+string Poliz::ToString()
+{
+	string s = "";
+
+	while (!poliz.IsEmpty()) {
+		Lexem l = poliz.Pop();
+		if (l.type == LEX_VAR)
+			s += varTable.GetRecordAt(l.varIndex).GetKey();
+		else if (l.type == LEX_NUMBER)
+		{
+			char buf[20] = { };
+			sprintf_s<20>(buf, "%f", (float)l.value);
+			s += buf;
+		}
+		else if (l.type != LEX_EOL) {
+			s += opTable.GetRecordAt(l.type).GetKey();
+		}
+	}
+
+	return s;
 }
 
 #endif // _POLIZ_H_
