@@ -39,7 +39,9 @@ public:
 	void SetValue(const string &key, const T &value);
 	int Find(const string &key) const;
 
-	Record<T> &GetRecordAt(int idx);
+	string GetKeyAt(int idx) const;
+	T GetValueAt(int idx) const;
+	void SetValueAt(int idx, T value);
 
 	Map<T> &operator=(const Map<T> &m);
 private:
@@ -123,10 +125,24 @@ int Map<T>::Find(const string &key) const
 }
 
 template<class T>
-Record<T> &Map<T>::GetRecordAt(int i)
+string Map<T>::GetKeyAt(int idx) const
 {
-	if (i < 0 || i >= count) throw;
-	return rows[i];
+	if (idx < 0 || idx >= count) throw;
+	return rows[idx].GetKey();
+}
+
+template<class T>
+T Map<T>::GetValueAt(int idx) const
+{
+	if (idx < 0 || idx >= count) throw;
+	return rows[idx].GetValue();
+}
+
+template<class T>
+void SetValueAt(int idx, T value)
+{
+	if (idx < 0 || idx >= count) throw;
+	rows[idx].Setvalue(value);
 }
 
 template<class T>

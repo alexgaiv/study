@@ -12,6 +12,10 @@ class Poliz
 {
 public:
 	Poliz(const string &expr = "");
+	Poliz(const Poliz &p) { throw; }
+	~Poliz();
+	Poliz &operator=(const Poliz &p) { throw; }
+
 	string ToString();
 private:
 	friend class Parser;
@@ -48,16 +52,21 @@ private:
 			: type(type), value(value) { }
 		Lexem(lexem_t type, int varIndex)
 			: type(type), varIndex(varIndex) { }
+
+		bool IsFunc() const {
+			return type >= LEX_COS && type <= LEX_LOG;
+		}
+		bool IsOperator() const {
+			return type >= LEX_PLUS && type <= LEX_POW;
+		}
 	};
 	
-	Stack<Lexem> poliz;
+	Lexem *poliz;
+	int polizSize;
 	Stack<Lexem> lexemStack;
 	Map<double> varTable;
 	Map<int> opTable;
 	const char *str;
-
-	bool IsFunc(lexem_t t) { return t >= LEX_COS && t <= LEX_LOG; }
-	bool IsOperator(lexem_t t) { return t >= LEX_PLUS && t <= LEX_POW; }
 
 	void FillOpTable();
 	Lexem NextLexem();
@@ -65,9 +74,12 @@ private:
 };
 
 Poliz::Poliz(const string &expr)
-	: poliz(expr.size()), lexemStack(expr.size()),
+  : lexemStack(expr.size()),
 	varTable(expr.size()), opTable(12)
 {
+	polizSize = 0;
+	poliz = new Lexem[expr.size()];
+
 	try {
 		str = expr.c_str();
 		FillOpTable();
@@ -81,6 +93,10 @@ Poliz::Poliz(const string &expr)
 	{
 	
 	}
+}
+
+Poliz::~Poliz() {
+	delete poliz;
 }
 
 void Poliz::FillOpTable()
@@ -166,26 +182,26 @@ void Poliz::MakePoliz()
 	while (l.type != LEX_EOL)
 	{
 		if (l.type == LEX_NUMBER || l.type == LEX_VAR)
-			poliz.Push(l);
-		else if (IsFunc(l.type) || l.type == LEX_LPAREN)
+			poliz[polizSize++] = l;
+		else if (l.IsFunc() || l.type == LEX_LPAREN)
 			lexemStack.Push(l);
 		else if (l.type == LEX_RPAREN)
 		{
 			while (l.type != LEX_LPAREN)
 			{
 				if (lexemStack.IsEmpty()) throw l;
-				poliz.Push(lexemStack.Pop());
+				poliz[polizSize++] = lexemStack.Pop();
 			}
 			lexemStack.Pop();
-			if (!lexemStack.IsEmpty() && IsFunc(lexemStack.Top().type))
-				poliz.Push(lexemStack.Pop());
+			if (!lexemStack.IsEmpty() && lexemStack.Top().IsFunc())
+				poliz[polizSize++] = lexemStack.Pop();
 		}
-		else if (IsOperator(l.type)) {
-			int p = opTable.GetRecordAt(l.type).GetValue();
-			while (!lexemStack.IsEmpty() && IsOperator(lexemStack.Top().type) &&
-				p <= opTable.GetRecordAt(lexemStack.Top().type).GetValue())
+		else if (l.IsOperator()) {
+			int p = opTable.GetValueAt(l.type);
+			while (!lexemStack.IsEmpty() && lexemStack.Top().IsOperator() &&
+				p <= opTable.GetValueAt(lexemStack.Top().type))
 			{
-				poliz.Push(lexemStack.Pop());
+				poliz[polizSize++] = lexemStack.Pop();
 			}
 			lexemStack.Push(l);
 		}
@@ -193,8 +209,8 @@ void Poliz::MakePoliz()
 	}
 	while (!lexemStack.IsEmpty()) {
 		Lexem l = lexemStack.Pop();
-		if (!IsOperator(l.type)) throw l;
-		poliz.Push(l);
+		if (!l.IsOperator()) throw l;
+		poliz[polizSize++] = l;
 	}
 }
 
@@ -202,10 +218,10 @@ string Poliz::ToString()
 {
 	string s = "";
 
-	while (!poliz.IsEmpty()) {
-		Lexem l = poliz.Pop();
+	for (int i = 0; i < polizSize; i++) {
+		Lexem l = poliz[i];
 		if (l.type == LEX_VAR)
-			s += varTable.GetRecordAt(l.varIndex).GetKey();
+			s += varTable.GetKeyAt(l.varIndex);
 		else if (l.type == LEX_NUMBER)
 		{
 			char buf[20] = { };
@@ -213,7 +229,7 @@ string Poliz::ToString()
 			s += buf;
 		}
 		else if (l.type != LEX_EOL) {
-			s += opTable.GetRecordAt(l.type).GetKey();
+			s += opTable.GetKeyAt(l.type);
 		}
 	}
 

@@ -3,6 +3,6 @@
 int main()
 {
 	Poliz p("a + bv - cos(atan(342))/3");
-	string s = p.ToString();
+	const char *s = p.ToString().data();
 	return 0;
 }
