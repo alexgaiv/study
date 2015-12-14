@@ -5,10 +5,10 @@
 using namespace std;
 
 template<class TValue>
-class Record
+class TRecord
 {
 public:
-	Record(string key = "", TValue value = TValue(0)) : key(key), value(value)
+	TRecord(string key = "", TValue value = TValue(0)) : key(key), value(value)
 	{ }
 
 	string GetKey() const { return key; }
@@ -20,64 +20,73 @@ private:
 };
 
 template<class T>
-class Map
+class TMap
 {
 public:
-	Map(int size = 0);
-	Map(const Map<T> &m);
-	~Map();
+	TMap(int size = 0);
+	TMap(const TMap<T> &m);
+	~TMap();
 
 	int GetCount() const { return count; }
 	int GetCapacity() const { return size; }
 	bool IsEmpty() const { return count == 0; }
 	bool IsFull() const { return count == size; }
 
-	void Add(const string &key, const T &value = T(0));
+	int Add(const string &key, const T &value = T(0));
 	void Delete(const string &key);
 	bool HasValue(const string &key) const;
 	T GetValue(const string &key) const;
 	void SetValue(const string &key, const T &value);
-	
-	Map<T> &operator=(const Map<T> &m);
+	int Find(const string &key) const;
+
+	string GetKeyAt(int idx) const;
+	T GetValueAt(int idx) const;
+	void SetValueAt(int idx, T value);
+
+	TMap<T> &operator=(const TMap<T> &m);
 private:
 	int size, count;
-	Record<T> *rows;
-
-	int Find(const string &key) const;
+	TRecord<T> *rows;
 };
 
 template<class T>
-Map<T>::Map(int size)
+TMap<T>::TMap(int size)
 {
 	this->size = size;
 	this->count = 0;
-	rows = new Record<T>[size];
+	rows = new TRecord<T>[size];
 }
 
 template<class T>
-Map<T>::Map(const Map<T> &m)
+TMap<T>::TMap(const TMap<T> &m)
 {
 	this->size = m.size;
 	this->count = m.size;
-	rows = new Record<T>[size];
+	rows = new TRecord<T>[size];
 	for (int i = 0; i < count; i++)
 		rows[i] =  m.rows[i];
 }
 
 template<class T>
-Map<T>::~Map() {
+TMap<T>::~TMap() {
 	delete [] rows;
 }
 
 template<class T>
-void Map<T>::Add(const string &key, const T &value)
+int TMap<T>::Add(const string &key, const T &value)
 {
 	if (IsFull()) throw;
-	rows[count++] = Record<T>(key, value);
+	int i = Find(key);
+	if (i != -1) {
+		rows[i].SetValue(value);
+		return i;
+	}
+	rows[count] = TRecord<T>(key, value);
+	return count++;
 }
 
 template<class T>
-void Map<T>::Delete(const string &key)
+void TMap<T>::Delete(const string &key)
 {
 	int i = Find(key);
 	if (i != -1)
@@ -85,12 +94,12 @@ void Map<T>::Delete(const string &key)
 }
 
 template<class T>
-bool Map<T>::HasValue(const string &key) const {
+bool TMap<T>::HasValue(const string &key) const {
 	return Find(key) != -1;
 }
 
 template<class T>
-T Map<T>::GetValue(const string &key) const
+T TMap<T>::GetValue(const string &key) const
 {
 	int i = Find(key);
 	if (i == -1) throw;
@@ -98,7 +107,7 @@ T Map<T>::GetValue(const string &key) const
 }
 
 template<class T>
-void Map<T>::SetValue(const string &key, const T &value)
+void TMap<T>::SetValue(const string &key, const T &value)
 {
 	int i = Find(key);
 	if (i == -1) throw;
@@ -106,7 +115,7 @@ void Map<T>::SetValue(const string &key, const T &value)
 }
 
 template<class T>
-int Map<T>::Find(const string &key) const
+int TMap<T>::Find(const string &key) const
 {
 	for (int i = 0; i < count; i++) {
 		if (rows[i].GetKey() == key)
@@ -116,11 +125,32 @@ int Map<T>::Find(const string &key) const
 }
 
 template<class T>
-Map<T> &Map<T>::operator=(const Map<T> &m)
+string TMap<T>::GetKeyAt(int idx) const
+{
+	if (idx < 0 || idx >= count) throw;
+	return rows[idx].GetKey();
+}
+
+template<class T>
+T TMap<T>::GetValueAt(int idx) const
+{
+	if (idx < 0 || idx >= count) throw;
+	return rows[idx].GetValue();
+}
+
+template<class T>
+void SetValueAt(int idx, T value)
+{
+	if (idx < 0 || idx >= count) throw;
+	rows[idx].Setvalue(value);
+}
+
+template<class T>
+TMap<T> &TMap<T>::operator=(const TMap<T> &m)
 {
 	if (size != m.size) {
 		delete [] rows;
-		rows = new Record<T>[m.size];
+		rows = new TRecord<T>[m.size];
 	}
 	size = m.size;
 	count = m.count;
