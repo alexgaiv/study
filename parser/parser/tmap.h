@@ -1,5 +1,5 @@
-#ifndef _TABLE_H_
-#define _TABLE_H_
+#ifndef _TMAP_H_
+#define _TMAP_H_
 
 #include <string>
 using namespace std;
@@ -159,4 +159,4 @@ TMap<T> &TMap<T>::operator=(const TMap<T> &m)
 	return *this;
 }
 
-#endif _TABLE_H_
+#endif _TMAP_H_ // _TMAP_H_

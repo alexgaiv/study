@@ -69,7 +69,7 @@ private:
 	
 	Lexem *poliz;
 	int polizSize;
-	TStack<Lexem> lexemTStack;
+	TStack<Lexem> lexemStack;
 	TMap<double> varTable;
 	TMap<int> opTable;
 	const char *str;
@@ -81,7 +81,7 @@ private:
 };
 
 Poliz::Poliz(const string &expr)
-  : lexemTStack(expr.size()),
+  : lexemStack(expr.size()),
 	varTable(expr.size()), opTable(13)
 {
 	polizSize = 0;
@@ -192,30 +192,30 @@ void Poliz::MakePoliz()
 		if (l.type == LEX_NUMBER || l.type == LEX_VAR)
 			poliz[polizSize++] = l;
 		else if (l.IsFunc() || l.type == LEX_LPAREN)
-			lexemTStack.Push(l);
+			lexemStack.Push(l);
 		else if (l.type == LEX_RPAREN)
 		{
-			while (!lexemTStack.IsEmpty() && lexemTStack.Top().type != LEX_LPAREN)
-				poliz[polizSize++] = lexemTStack.Pop();
-			if (lexemTStack.Top().type != LEX_LPAREN) throw;
+			while (!lexemStack.IsEmpty() && lexemStack.Top().type != LEX_LPAREN)
+				poliz[polizSize++] = lexemStack.Pop();
+			if (lexemStack.Top().type != LEX_LPAREN) throw;
 
-			lexemTStack.Pop();
-			if (!lexemTStack.IsEmpty() && lexemTStack.Top().IsFunc())
-				poliz[polizSize++] = lexemTStack.Pop();
+			lexemStack.Pop();
+			if (!lexemStack.IsEmpty() && lexemStack.Top().IsFunc())
+				poliz[polizSize++] = lexemStack.Pop();
 		}
 		else if (l.IsOperator()) {
 			int p = opTable.GetValueAt(l.type);
-			while (!lexemTStack.IsEmpty() && lexemTStack.Top().IsOperator() &&
-				p <= opTable.GetValueAt(lexemTStack.Top().type))
+			while (!lexemStack.IsEmpty() && lexemStack.Top().IsOperator() &&
+				p <= opTable.GetValueAt(lexemStack.Top().type))
 			{
-				poliz[polizSize++] = lexemTStack.Pop();
+				poliz[polizSize++] = lexemStack.Pop();
 			}
-			lexemTStack.Push(l);
+			lexemStack.Push(l);
 		}
 		l = NextLexem();
 	}
-	while (!lexemTStack.IsEmpty()) {
-		Lexem l = lexemTStack.Pop();
+	while (!lexemStack.IsEmpty()) {
+		Lexem l = lexemStack.Pop();
 		if (!l.IsOperator()) throw l;
 		poliz[polizSize++] = l;
 	}
@@ -232,7 +232,7 @@ string Poliz::ToString()
 		else if (l.type == LEX_NUMBER)
 		{
 			char buf[20] = { };
-			sprintf_s<20>(buf, "%.2f", (float)l.value);
+			sprintf_s<20>(buf, "%.0f", (float)l.value);
 			s += buf;
 			s += " ";
 		}

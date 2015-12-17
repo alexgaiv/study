@@ -1,5 +1,5 @@
-#ifndef _TStack_H_
-#define _TStack_H_
+#ifndef _TSTACK_H_
+#define _TSTACK_H_
 
 template<class T>
 class TStack
@@ -82,4 +82,4 @@ T TStack<T>::Top() const
 	return data[last - 1];
 }
 
-#endif // _TStack_H_
+#endif // _TSTACK_H_
