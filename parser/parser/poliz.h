@@ -3,10 +3,52 @@
 
 #include <string>
 #include "parser.h"
-#include "stack.h"
-#include "map.h"
+#include "tstack.h"
+#include "tmap.h"
 using namespace std;
 
+enum lexem_t {
+	LEX_PLUS = 0,
+	LEX_MINUS,
+	LEX_MULT,
+	LEX_DIV,
+	LEX_POW,
+	LEX_SQRT,
+	LEX_COS,
+	LEX_SIN,
+	LEX_TAN,
+	LEX_ATAN,
+	LEX_LOG,
+	LEX_LPAREN,
+	LEX_RPAREN,
+	LEX_VAR,
+	LEX_NUMBER,
+	LEX_EOL,
+};
+
+class Lexem
+{
+public:
+	lexem_t type;
+	union
+	{
+		double value;
+		int varIndex;
+	};
+
+	Lexem(lexem_t type = lexem_t(0)) : type(type) { }
+	Lexem(lexem_t type, double value)
+		: type(type), value(value) { }
+	Lexem(lexem_t type, int varIndex)
+		: type(type), varIndex(varIndex) { }
+
+	bool IsFunc() const {
+		return type >= LEX_SQRT && type <= LEX_LOG;
+	}
+	bool IsOperator() const {
+		return type >= LEX_PLUS && type <= LEX_POW;
+	}
+};
 
 class Poliz
 {
@@ -17,56 +59,21 @@ public:
 	Poliz &operator=(const Poliz &p) { throw; }
 
 	string ToString();
+	string LastError() {
+		string s(lastError);
+		lastError = "";
+		return s;
+	}
 private:
 	friend class Parser;
-
-	enum lexem_t {
-		LEX_PLUS = 0,
-		LEX_MINUS,
-		LEX_MULT,
-		LEX_DIV,
-		LEX_POW,
-		LEX_COS,
-		LEX_SIN,
-		LEX_TAN,
-		LEX_ATAN,
-		LEX_LOG,
-		LEX_LPAREN,
-		LEX_RPAREN,
-		LEX_VAR,
-		LEX_NUMBER,
-		LEX_EOL,
-	};
-
-	struct Lexem
-	{
-		lexem_t type;
-		union
-		{
-			double value;
-			int varIndex;
-		};
-
-		Lexem(lexem_t type = lexem_t(0)) : type(type) { }
-		Lexem(lexem_t type, double value)
-			: type(type), value(value) { }
-		Lexem(lexem_t type, int varIndex)
-			: type(type), varIndex(varIndex) { }
-
-		bool IsFunc() const {
-			return type >= LEX_COS && type <= LEX_LOG;
-		}
-		bool IsOperator() const {
-			return type >= LEX_PLUS && type <= LEX_POW;
-		}
-	};
 	
 	Lexem *poliz;
 	int polizSize;
-	Stack<Lexem> lexemStack;
-	Map<double> varTable;
-	Map<int> opTable;
+	TStack<Lexem> lexemStack;
+	TMap<double> varTable;
+	TMap<int> opTable;
 	const char *str;
+	string lastError;
 
 	void FillOpTable();
 	Lexem NextLexem();
@@ -75,7 +82,7 @@ private:
 
 Poliz::Poliz(const string &expr)
   : lexemStack(expr.size()),
-	varTable(expr.size()), opTable(12)
+	varTable(expr.size()), opTable(13)
 {
 	polizSize = 0;
 	poliz = new Lexem[expr.size()];
@@ -87,11 +94,12 @@ Poliz::Poliz(const string &expr)
 	}
 	catch(char c)
 	{
-	
+		lastError = string("Unexpected symbol ") + c;
 	}
 	catch(Lexem l)
 	{
-	
+		string lex = opTable.GetKeyAt(l.type);
+		lastError = string("Unexpected lexem ") + lex;
 	}
 }
 
@@ -101,13 +109,13 @@ Poliz::~Poliz() {
 
 void Poliz::FillOpTable()
 {
-	const char *delims[12] = { "+", "-", "*", "/", "^", "cos", "sin", "tan", "atan", "log", "(", ")" };
-	int priority[12] = { 1, 1, 2, 2, 3, 4, 4, 4, 4, 4, 0, 0 };
-	for (int i = 0; i < 12; i++)
+	const char *delims[13] = { "+", "-", "*", "/", "^", "sqrt", "cos", "sin", "tan", "atan", "log", "(", ")" };
+	int priority[13] = { 1, 1, 2, 2, 3, 4, 4, 4, 4, 4, 4, 0, 0 };
+	for (int i = 0; i < 13; i++)
 		opTable.Add(delims[i], priority[i]);
 }
 
-Poliz::Lexem Poliz::NextLexem()
+Lexem Poliz::NextLexem()
 {
 	enum lexem_state
 	{
@@ -187,11 +195,10 @@ void Poliz::MakePoliz()
 			lexemStack.Push(l);
 		else if (l.type == LEX_RPAREN)
 		{
-			while (l.type != LEX_LPAREN)
-			{
-				if (lexemStack.IsEmpty()) throw l;
+			while (!lexemStack.IsEmpty() && lexemStack.Top().type != LEX_LPAREN)
 				poliz[polizSize++] = lexemStack.Pop();
-			}
+			if (lexemStack.Top().type != LEX_LPAREN) throw;
+
 			lexemStack.Pop();
 			if (!lexemStack.IsEmpty() && lexemStack.Top().IsFunc())
 				poliz[polizSize++] = lexemStack.Pop();
@@ -221,15 +228,16 @@ string Poliz::ToString()
 	for (int i = 0; i < polizSize; i++) {
 		Lexem l = poliz[i];
 		if (l.type == LEX_VAR)
-			s += varTable.GetKeyAt(l.varIndex);
+			s += varTable.GetKeyAt(l.varIndex) + " ";
 		else if (l.type == LEX_NUMBER)
 		{
 			char buf[20] = { };
-			sprintf_s<20>(buf, "%f", (float)l.value);
+			sprintf_s<20>(buf, "%.0f", (float)l.value);
 			s += buf;
+			s += " ";
 		}
 		else if (l.type != LEX_EOL) {
-			s += opTable.GetKeyAt(l.type);
+			s += opTable.GetKeyAt(l.type) + " ";
 		}
 	}
 

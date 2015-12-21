@@ -1,15 +1,15 @@
-#ifndef _STACK_H_
-#define _STACK_H_
+#ifndef _TSTACK_H_
+#define _TSTACK_H_
 
 template<class T>
-class Stack
+class TStack
 {
 public:
-	Stack(int size = 0);
-	Stack(const Stack<T> &s);
-	~Stack();
+	TStack(int size = 0);
+	TStack(const TStack<T> &s);
+	~TStack();
 
-	Stack<T> &operator=(const Stack<T> &s);
+	TStack<T> &operator=(const TStack<T> &s);
 
 	int GetCount() const { return last; }
 	int GetCapacity() const { return size; }
@@ -20,12 +20,12 @@ public:
 	T Pop();
 	T Top() const;
 private:
-	int *data;
+	T *data;
 	int size, last;
 };
 
 template<class T>
-Stack<T>::Stack(int size)
+TStack<T>::TStack(int size)
 {
 	this->size = size;
 	this->last = 0;
@@ -33,7 +33,7 @@ Stack<T>::Stack(int size)
 }
 
 template<class T>
-Stack<T>::Stack(const Stack<T> &s)
+TStack<T>::TStack(const TStack<T> &s)
 {
 	size = s.size;
 	last = s.last;
@@ -43,7 +43,7 @@ Stack<T>::Stack(const Stack<T> &s)
 }
 
 template<class T>
-Stack<T> &Stack<T>::operator=(const Stack<T> &s)
+TStack<T> &TStack<T>::operator=(const TStack<T> &s)
 {
 	if (size != s.size) {
 		delete [] data;
@@ -57,29 +57,29 @@ Stack<T> &Stack<T>::operator=(const Stack<T> &s)
 }
 
 template<class T>
-Stack<T>::~Stack() {
+TStack<T>::~TStack() {
 	delete [] data;
 }
 
 template<class T>
-void Stack<T>::Push(T elem)
+void TStack<T>::Push(T elem)
 {
 	if (IsFull()) throw;
 	data[last++] = elem;
 }
 
 template<class T>
-T Stack<T>::Pop()
+T TStack<T>::Pop()
 {
 	if (IsEmpty()) throw;
 	return data[--last];
 }
 
 template<class T>
-T Stack<T>::Top() const
+T TStack<T>::Top() const
 {
 	if (IsEmpty()) throw;
 	return data[last - 1];
 }
 
-#endif // _STACK_H_
+#endif // _TSTACK_H_

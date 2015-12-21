@@ -3,11 +3,11 @@
 #include <math.h>
 using namespace std;
 
-#define ARR_SIZE 6
+#define ARR_SIZE 5
 
 void Sort(int arr[ARR_SIZE], int maxDigits)
 {
-	Queue<int> *qs = new Queue<int>[10];
+	Queue<int> qs[10];
 
 	for (int d = 0; d < maxDigits; d++) {
 		for (int i = 0; i < ARR_SIZE; i++) {
@@ -22,15 +22,12 @@ void Sort(int arr[ARR_SIZE], int maxDigits)
 			}
 		}
 	}
-
-	delete [] qs;
 }
 
 
 int main()
 {
-	int arr[ARR_SIZE] = { 1234, 5663, 6783, 3577, 6234, 5731 };
-	int arr_new[ARR_SIZE] = {  };
+	int arr[ARR_SIZE] = { 5634, 5664, 5663, 6783, 3577 };
 
 	for (int i = 0; i < ARR_SIZE; i++)
 		cout << arr[i] << ' ';
