@@ -21,7 +21,6 @@ void Sort(int arr[ARR_SIZE], int maxDigits)
 				arr[k++] = qs[i].Pop();
 			}
 		}
-		k++;
 	}
 
 	delete [] qs;
@@ -40,7 +39,7 @@ int main()
 	Sort(arr, 4);
 
 	for (int i = 0; i < ARR_SIZE; i++)
-		cout << arr_new[i] << ' ';
+		cout << arr[i] << ' ';
 	cout << endl;
 
 	system("pause");
