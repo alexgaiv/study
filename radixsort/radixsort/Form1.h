@@ -25,13 +25,29 @@ namespace radixsort {
 			InitializeComponent();
 			arr = new int [arr_size];
 			qs = new TQueue<int>[10];
+
+			dataGridView1->Rows->Clear();
+			for (int i = 0; i < arr_size; i++) {
+				array<String ^> ^row = gcnew array<String ^>(10);
+				dataGridView1->Rows->Add(row);
+			}
 		}
 	private:
 		int *arr;
 		static const int arr_size = 10;
 		int maxDigits, curDigit;
 		bool init;
-		TQueue<int> *qs;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column1;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column2;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column3;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column4;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column5;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column6;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column7;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column8;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column9;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column10;
+			 TQueue<int> *qs;
 
 		String ^JoinArr() {
 			String ^s = "";
@@ -41,11 +57,18 @@ namespace radixsort {
 			return s;
 		}
 
+		void ClearGrid() {
+			for (int i = 0; i < dataGridView1->RowCount; i++) {
+				for (int j = 0; j < dataGridView1->Rows[i]->Cells->Count; j++)
+					dataGridView1->Rows[i]->Cells[j]->Value = "";
+			}
+		}
+
 		void RadixSort()
 		{
 			InitSort();
 			for (curDigit = 0; curDigit < maxDigits; curDigit++)
-				SortStep();
+				SortStep(false);
 		}
 
 		void InitSort()
@@ -60,48 +83,27 @@ namespace radixsort {
 				max /= 10;
 			}
 
-			dataGridView1->Rows->Clear();
-			for (int i = 0; i < maxDigits; i++) {
-				array<String ^> ^row = { "", "", "", "", "", "", "", "", "", "" };
-				dataGridView1->Rows->Add(row);
-			}
+			ClearGrid();
 			init = true;
 		}
 		
-
-		void SortStep()
+		void SortStep(bool updateGrid)
 		{
 			for (int i = 0; i < arr_size; i++) {
 				int d = (arr[i] / (int)pow(10.0, curDigit)) % 10;
 				qs[d].Push(arr[i]);
 			}
 
-			UpdateGrid();
+			if (updateGrid) ClearGrid();
 
 			int k = 0;
 			for (int i = 0; i < 10; i++) {
+				int n = 0;
 				while (!qs[i].IsEmpty()) {
 					arr[k++] = qs[i].Pop();
-				}
-			}
-		}
 
-		void UpdateGrid()
-		{
-			for (int i = 0; i < maxDigits; i++) {
-				for (int j = 0; j < 10; j++) {
-					int free = maxDigits - 1;
-					for (int k = 0; k < maxDigits - 1; i++) {
-						if (dataGridView1->Rows[i]->Cells[j]->Value == nullptr ||
-							dataGridView1->Rows[i]->Cells[j]->Value->ToString() = "")
-						{
-							free = k;
-						}
-					}
-
-					if (!qs[i].IsEmpty())
-						dataGridView1->Rows[i]->Cells[free]->Value = qs[i].Pop().ToString();
-					else dataGridView1->Rows[i]->Cells[free]->Value = "";
+					if (updateGrid)
+						dataGridView1->Rows[n++]->Cells[i]->Value = arr[k - 1];
 				}
 			}
 		}
@@ -116,28 +118,27 @@ namespace radixsort {
 		}
 
 #pragma region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
 		private: System::Windows::Forms::DataGridView^  dataGridView1;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column1;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column2;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column3;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column4;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column5;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column6;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column7;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column8;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column9;
-		private: System::Windows::Forms::DataGridViewTextBoxColumn^  Column10;
-		private: System::Windows::Forms::Button^  button3;
+
+
+
+
+
+
+
+
+
+
+private: System::Windows::Forms::Button^  button_sort;
+
 		private: System::Windows::Forms::TextBox^  textBox1;
 		private: System::Windows::Forms::Label^  label1;
 		private: System::Windows::Forms::TextBox^  textBox2;
 		private: System::Windows::Forms::Label^  label2;
-		private: System::Windows::Forms::Button^  button1;
-		private: System::Windows::Forms::Button^  button2;
+private: System::Windows::Forms::Button^  button_rand;
+private: System::Windows::Forms::Button^  button_step;
+
+
 		private: System::Windows::Forms::Label^  label3;
 
 		private:
@@ -152,10 +153,10 @@ namespace radixsort {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->button1 = (gcnew System::Windows::Forms::Button());
-			this->button2 = (gcnew System::Windows::Forms::Button());
+			this->button_rand = (gcnew System::Windows::Forms::Button());
+			this->button_step = (gcnew System::Windows::Forms::Button());
 			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->button3 = (gcnew System::Windows::Forms::Button());
+			this->button_sort = (gcnew System::Windows::Forms::Button());
 			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
 			this->Column1 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Column2 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
@@ -204,26 +205,26 @@ namespace radixsort {
 			this->label2->TabIndex = 3;
 			this->label2->Text = L"Sorted:";
 			// 
-			// button1
+			// button_rand
 			// 
-			this->button1->Location = System::Drawing::Point(538, 17);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(75, 23);
-			this->button1->TabIndex = 4;
-			this->button1->Text = L"Randomize";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &Form1::button1_Click);
+			this->button_rand->Location = System::Drawing::Point(538, 17);
+			this->button_rand->Name = L"button_rand";
+			this->button_rand->Size = System::Drawing::Size(75, 23);
+			this->button_rand->TabIndex = 4;
+			this->button_rand->Text = L"Randomize";
+			this->button_rand->UseVisualStyleBackColor = true;
+			this->button_rand->Click += gcnew System::EventHandler(this, &Form1::button_rand_Click);
 			// 
-			// button2
+			// button_step
 			// 
-			this->button2->Enabled = false;
-			this->button2->Location = System::Drawing::Point(538, 85);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(75, 23);
-			this->button2->TabIndex = 5;
-			this->button2->Text = L"Step";
-			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &Form1::button2_Click);
+			this->button_step->Enabled = false;
+			this->button_step->Location = System::Drawing::Point(538, 85);
+			this->button_step->Name = L"button_step";
+			this->button_step->Size = System::Drawing::Size(75, 23);
+			this->button_step->TabIndex = 5;
+			this->button_step->Text = L"Step";
+			this->button_step->UseVisualStyleBackColor = true;
+			this->button_step->Click += gcnew System::EventHandler(this, &Form1::button_step_Click);
 			// 
 			// label3
 			// 
@@ -234,16 +235,16 @@ namespace radixsort {
 			this->label3->TabIndex = 6;
 			this->label3->Text = L"Queues:";
 			// 
-			// button3
+			// button_sort
 			// 
-			this->button3->Enabled = false;
-			this->button3->Location = System::Drawing::Point(538, 52);
-			this->button3->Name = L"button3";
-			this->button3->Size = System::Drawing::Size(75, 23);
-			this->button3->TabIndex = 7;
-			this->button3->Text = L"Sort";
-			this->button3->UseVisualStyleBackColor = true;
-			this->button3->Click += gcnew System::EventHandler(this, &Form1::button3_Click);
+			this->button_sort->Enabled = false;
+			this->button_sort->Location = System::Drawing::Point(538, 52);
+			this->button_sort->Name = L"button_sort";
+			this->button_sort->Size = System::Drawing::Size(75, 23);
+			this->button_sort->TabIndex = 7;
+			this->button_sort->Text = L"Sort";
+			this->button_sort->UseVisualStyleBackColor = true;
+			this->button_sort->Click += gcnew System::EventHandler(this, &Form1::button_sort_Click);
 			// 
 			// dataGridView1
 			// 
@@ -251,13 +252,17 @@ namespace radixsort {
 			this->dataGridView1->AllowUserToDeleteRows = false;
 			this->dataGridView1->AllowUserToResizeColumns = false;
 			this->dataGridView1->AllowUserToResizeRows = false;
+			this->dataGridView1->BackgroundColor = System::Drawing::Color::White;
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
 			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(10) {this->Column1, 
 				this->Column2, this->Column3, this->Column4, this->Column5, this->Column6, this->Column7, this->Column8, this->Column9, this->Column10});
 			this->dataGridView1->Location = System::Drawing::Point(29, 132);
+			this->dataGridView1->MultiSelect = false;
 			this->dataGridView1->Name = L"dataGridView1";
+			this->dataGridView1->ReadOnly = true;
 			this->dataGridView1->RowHeadersVisible = false;
-			this->dataGridView1->Size = System::Drawing::Size(503, 230);
+			this->dataGridView1->SelectionMode = System::Windows::Forms::DataGridViewSelectionMode::CellSelect;
+			this->dataGridView1->Size = System::Drawing::Size(503, 243);
 			this->dataGridView1->TabIndex = 8;
 			// 
 			// Column1
@@ -265,6 +270,7 @@ namespace radixsort {
 			this->Column1->HeaderText = L"0";
 			this->Column1->Name = L"Column1";
 			this->Column1->ReadOnly = true;
+			this->Column1->Resizable = System::Windows::Forms::DataGridViewTriState::False;
 			this->Column1->Width = 50;
 			// 
 			// Column2
@@ -334,12 +340,12 @@ namespace radixsort {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(628, 381);
+			this->ClientSize = System::Drawing::Size(628, 390);
 			this->Controls->Add(this->dataGridView1);
-			this->Controls->Add(this->button3);
+			this->Controls->Add(this->button_sort);
 			this->Controls->Add(this->label3);
-			this->Controls->Add(this->button2);
-			this->Controls->Add(this->button1);
+			this->Controls->Add(this->button_step);
+			this->Controls->Add(this->button_rand);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->label1);
@@ -352,26 +358,30 @@ namespace radixsort {
 
 		}
 #pragma endregion
-	void button1_Click(System::Object^  sender, System::EventArgs^  e)
+	void button_rand_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		for (int i = 0; i < arr_size; i++)
 			arr[i] = rand() % 10000;
 		textBox1->Text = JoinArr();
-		button2->Enabled = true;
-		button3->Enabled = true;
+		textBox2->Text = "";
+		button_sort->Enabled = true;
+		button_step->Enabled = true;
+
+		ClearGrid();
 		init = false;
 		curDigit = 0;
 	}
-	void button3_Click(System::Object^  sender, System::EventArgs^  e)
+	void button_sort_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		RadixSort();
 		textBox2->Text = JoinArr();
 	}
-	void button2_Click(System::Object^  sender, System::EventArgs^  e)
+	void button_step_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		if (!init) InitSort();
-		if (curDigit++ < maxDigits) {
-			SortStep();
+		if (curDigit < maxDigits) {
+			SortStep(true);
+			curDigit++;
 			textBox2->Text = JoinArr();
 		}
 	}
