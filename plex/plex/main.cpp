@@ -8,6 +8,6 @@ void Main(array<String^>^ args)
 {
     Application::EnableVisualStyles();
     Application::SetCompatibleTextRenderingDefault(false);
-    polynom::MyForm myForm;
+    plex::MyForm myForm; 
     Application::Run(%myForm);
 }

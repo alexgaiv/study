@@ -5,6 +5,7 @@ template<class T>
 class CircularList
 {
 public:
-}
+
+};
 
 #endif // _CIRCULAR_LIST_H_
